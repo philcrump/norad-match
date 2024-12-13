@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<script>
+let map = {};
+let maparray = [];
+
+const url = "map.json";
+
+async function getData() {
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {
+		  throw new Error(`Response status: ${response.status}`);
+		}
+
+		map = await response.json();
+		maparray = Object.keys(map);
+	} catch (error) {
+		console.error(error.message);
+	}
+}
+
+window.addEventListener('load', () =>
+{
+	getData();
+
+
+	document.getElementById('norad_check_input').addEventListener("keyup", e => {
+		const key = e.target.value;
+
+		if(key.length > 0)
+		{
+			if(key in map)
+			{
+				document.getElementById('norad_check_match').innerHTML = `${key}: <b>${map[key].name}</b> [${map[key].type}]`;
+			}
+			else
+			{
+				document.getElementById('norad_check_match').innerHTML = "<i>No match.</i>";
+			}
+
+			let ids = maparray.filter(x => (x !== key && x.startsWith(key)) );
+			document.getElementById('norad_check_possible').innerHTML = ids.map(x => `${x}: ${map[x].name} [${map[x].type}]`).join('\n');
+		}
+		else
+		{
+			document.getElementById('norad_check_match').innerHTML = "<i>No input.</i>";
+			document.getElementById('norad_check_possible').textContent = "";
+		}
+	});
+
+});
+</script>
+<body>
+
+Enter NORAD ID: <input id="norad_check_input"></input>
+
+<br>
+<h4>Direct Match:</h4>
+<p style="margin-left: 1em;">
+  <span id="norad_check_match"><i>No input.</i></span>
+</p>
+<h4>Partial Matches:</h4>
+<textarea id="norad_check_possible" rows=20 cols=80></textarea>
+
+</body>
+</html>

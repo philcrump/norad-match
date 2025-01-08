@@ -1,4 +1,6 @@
 *~
 *.swp
 # data files
-*.json
+htdocs/map.json
+htdocs/map.json.gz
+credentials
